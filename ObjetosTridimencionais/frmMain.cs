@@ -17,5 +17,10 @@ namespace ObjetosTridimencionais
             InitializeComponent();
             pbCanvas.Size = new Size((int)(this.Size.Width * 0.8), this.Size.Height);
         }
+
+        private void BtnAbrir_Click(object sender, EventArgs e)
+        {
+            Control.LerArquivo
+        }
     }
 }

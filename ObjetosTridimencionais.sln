@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjetosTridimencionais", "ObjetosTridimencionais\ObjetosTridimencionais.csproj", "{6D12DB6D-B5EE-408F-9DFA-20FEB98D6AAE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjetosTridimensionais", "ObjetosTridimencionais\ObjetosTridimensionais.csproj", "{6D12DB6D-B5EE-408F-9DFA-20FEB98D6AAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
