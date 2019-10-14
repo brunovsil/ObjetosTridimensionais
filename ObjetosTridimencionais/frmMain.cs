@@ -14,25 +14,22 @@ namespace ObjetosTridimencionais
     {
         ControlMain _control;
         Bitmap img;
-        Point pos_click;
-        bool flag_m = false;
-        char botao;
+        Point ponto_ini; //ponto inicial do click
+        bool flag_down = false; //saber se está clickado
+        char botao = 'n'; //determina o botao do mouse
 
         public frmMain()
         {
             InitializeComponent();
-            pbCanvas.Size = new Size((int)(this.Size.Width * 0.9), this.Size.Height);
+            pbCanvas.Size = new Size((int)(this.Size.Width * 0.8), this.Size.Height);
+            pbCanvas.MouseWheel += pbCanvas_MouseWheel;
             _control = new ControlMain();
 
             pbCanvas.Image = img;
 
         }
 
-        private void BtnAbrir_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void btAbrir_Click(object sender, EventArgs e)
+        private void AbrirToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ofdAbrir = new OpenFileDialog()
             {
@@ -50,37 +47,54 @@ namespace ObjetosTridimencionais
             }
         }
 
+        #region MouseEvents
+
         private void pbCanvas_MouseDown(object sender, MouseEventArgs e)
         {
-            if(!flag_m)
-            {
-                flag_m = true;
-                pos_click = e.Location;
+            flag_down = true;
 
-                if (e.Button == MouseButtons.Left)
-                    botao = 'l';
-                else if (e.Button == MouseButtons.Right)
-                    botao = 'r';
-                else
-                    botao = 'n';
+            if (e.Button == MouseButtons.Right)
+            {
+                botao = 'r';
+                ponto_ini = e.Location;
             }
+                
         }
 
         private void pbCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if(flag_m)
+            if(flag_down)
             {
-                if(botao == 'l')
+                img = new Bitmap(pbCanvas.Width, pbCanvas.Height);
+
+                if (botao == 'r')
                 {
-                    _control.translacao(e.X - pos_click.X, e.Y - pos_click.Y);
+                    int dx = e.X - ponto_ini.X, dy = e.Y - ponto_ini.Y, dz = 0;
+
+                    _control.translacao(dx, dy, dz, img);
                 }
+
+                pbCanvas.Image = img;
             }
         }
 
         private void pbCanvas_MouseUp(object sender, MouseEventArgs e)
         {
-            flag_m = false;
-            botao = 'n';
+            flag_down = false;
         }
-    }
+
+        private void pbCanvas_MouseWheel(object sender, MouseEventArgs e)
+        {
+            img = new Bitmap(pbCanvas.Width, pbCanvas.Height);
+            if (e.Delta > 0)
+                _control.escala(1.1, img);
+            else
+                _control.escala(0.9, img);
+
+            pbCanvas.Image = img;
+        }
+
+        #endregion
+
+    }    
 }

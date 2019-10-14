@@ -10,12 +10,14 @@ namespace ObjetosTridimencionais
 {
     class Obj
     {
-        List<Vertice> list_v = new List<Vertice>();
+        List<Vertice> list_v = new List<Vertice>(); //lista de vertices originais
+        List<Vertice> list_va = new List<Vertice>(); //lista de vertices atuais
         List<Face> list_f = new List<Face>();
         double[,] mat_a = {
-                { 1, 0, 0},
-                { 0, 1, 0},
-                { 0, 0, 1}
+                { 1, 0, 0, 0},
+                { 0, 1, 0, 0},
+                { 0, 0, 1, 0},
+                { 0, 0, 0, 1 }
             }; //matriz acumulada de transformacao
 
         public Obj()
@@ -23,13 +25,14 @@ namespace ObjetosTridimencionais
         
         }
 
-        //getters e setters
-        public List<Vertice> getVertices() { return list_v; }
-        public void addVertice(Vertice v) { this.list_v.Add(v); }
+        #region Getters e Setters
+        public List<Vertice> getVertices() { return list_va; }
+        public void addVertice(Vertice v) { this.list_v.Add(v); this.list_va.Add(v); }
 
         public List<Face> getFaces() { return list_f; }
         public void addFace(Face f) { this.list_f.Add(f); }
 
+        #endregion
         //carrega o objeto a partir de um arquivo obj
         public void carregar(string caminho)
         {
@@ -79,9 +82,9 @@ namespace ObjetosTridimencionais
                 int[] _vet = f.getVet();
 
                 //vertices da face
-                Point p1 = new Point((int)list_v[_vet[0] - 1].getX() + meio.X, (int)list_v[_vet[0] - 1].getY() + meio.Y);
-                Point p2 = new Point((int)list_v[_vet[1] - 1].getX() + meio.X, (int)list_v[_vet[1] - 1].getY() + meio.Y);
-                Point p3 = new Point((int)list_v[_vet[2] - 1].getX() + meio.X, (int)list_v[_vet[2] - 1].getY() + meio.Y);
+                Point p1 = new Point((int)list_va[_vet[0] - 1].getX() + meio.X, (int)list_va[_vet[0] - 1].getY() + meio.Y);
+                Point p2 = new Point((int)list_va[_vet[1] - 1].getX() + meio.X, (int)list_va[_vet[1] - 1].getY() + meio.Y);
+                Point p3 = new Point((int)list_va[_vet[2] - 1].getX() + meio.X, (int)list_va[_vet[2] - 1].getY() + meio.Y);
 
                 //desenha as ligações dos vertices (regra da mão direita)
                 desenha_reta(p1, p2, img);
@@ -90,18 +93,54 @@ namespace ObjetosTridimencionais
             }
         }
 
-        public void translacao(int dx, int dy)
-        {
-            double[,] mat = {
-                { 1, 0, dx },
-                { 0, 1, dy},
-                { 0, 0, 1}
-            };
+        #region Transformacoes
 
-            double[,] result = mult_mat(mat, mat_a);
+        public void aplica_transformacoes()
+        {
+            list_va.Clear();
+            foreach(Vertice v in list_v)
+            {
+                double x = v.getX(), y = v.getY(), z = v.getZ();
+
+                double[,] mat = {
+                    { x},
+                    { y},
+                    { z},
+                    { 1}
+                };
+
+                double[,] result = mult_mat(mat_a, mat);
+
+                Vertice vn = new Vertice(result[0,0], result[1,0], result[2,0]);
+                list_va.Add(vn);
+            }
         }
 
-        //Métodos Auxiliares
+        public void translacao(int dx, int dy, int dz)
+        {
+            double[,] mat = {
+                { 1, 0, 0, dx },
+                { 0, 1, 0, dy},
+                { 0, 0, 0, dz},
+                { 0, 0, 0, 1}
+            };
+
+            mat_a = mult_mat(mat, mat_a);
+        }
+
+        public void escala(double value)
+        {
+            double[,] mat = {
+                { value, 0, 0, 0},
+                { 0, value, 0 ,0},
+                { 0, 0, value, 0},
+                { 0, 0, 0, 1 }
+            };
+
+            mat_a = mult_mat(mat, mat_a);
+        }
+        #endregion
+        #region Metodos Auxiliares
 
         //algoritmo do ponto médio para traçado de retas
         private void desenha_reta(Point ini, Point fim, Bitmap img)
@@ -178,13 +217,13 @@ namespace ObjetosTridimencionais
         {
             double soma = 0;
             double[,] result = new double[m1.GetLength(0), m2.GetLength(1)];
-            for (int linha = 0; linha < 3; linha++)
+            for (int linha = 0; linha < m1.GetLength(0); linha++)
             {
-                for (int coluna = 0; coluna < 3; coluna++)
+                for (int coluna = 0; coluna < m2.GetLength(1); coluna++)
                 {
                     for (int i = 0; i < 2; i++)
                     {
-                        soma = soma + m1[linha, i] * m2[i, coluna];
+                        soma += m1[linha, i] * m2[i, coluna];
                     }
                     result[linha, coluna] = soma;
 
@@ -194,5 +233,7 @@ namespace ObjetosTridimencionais
 
             return result;
         }
+
+        #endregion
     }
 }
