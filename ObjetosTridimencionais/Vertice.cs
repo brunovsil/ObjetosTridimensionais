@@ -8,24 +8,25 @@ namespace ObjetosTridimencionais
 {
     class Vertice
     {
-        private int x, y, z;
+        private double x, y, z;
 
         public Vertice() { }
 
-        public Vertice(int x, int y, int z)
+        public Vertice(double x, double y, double z)
         {
             this.x = x;
             this.y = y;
             this.z = z;
         }
 
-        public int getX() { return this.x; }
-        public void setX(int x) { this.x = x; }
+        //getters e setters
+        public double getX() { return this.x; }
+        public void setX(double x) { this.x = x; }
 
-        public int getY() { return this.y; }
-        public void setY(int y) { this.y = y; }
+        public double getY() { return this.y; }
+        public void setY(double y) { this.y = y; }
 
-        public int getZ() { return this.z; }
-        public void setZ(int z) { this.z = z; }
+        public double getZ() { return this.z; }
+        public void setZ(double z) { this.z = z; }
     }
 }
