@@ -20,9 +20,9 @@ namespace ObjetosTridimencionais
             obj.desenha_pp(img);
         }
 
-        public void translacao(int dx, int dy, int dz, Bitmap img)
+        public void translacao(int tx, int ty, int tz, Bitmap img)
         {
-            obj.translacao(dx, dy, dz);
+            obj.translacao(tx, ty, tz);
             obj.aplica_transformacoes();
             obj.desenha_pp(img);
         }

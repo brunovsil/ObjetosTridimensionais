@@ -14,10 +14,10 @@ namespace ObjetosTridimencionais
         List<Vertice> list_va = new List<Vertice>(); //lista de vertices atuais
         List<Face> list_f = new List<Face>();
         double[,] mat_a = {
-                { 1, 0, 0, 0},
-                { 0, 1, 0, 0},
-                { 0, 0, 1, 0},
-                { 0, 0, 0, 1 }
+                {1, 0, 0, 0},
+                {0, 1, 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}
             }; //matriz acumulada de transformacao
 
         public Obj()
@@ -95,6 +95,7 @@ namespace ObjetosTridimencionais
 
         #region Transformacoes
 
+        //multiplica todos os pontos originais pela matriz de tranformação acumulada - definindo os pontos atuais
         public void aplica_transformacoes()
         {
             list_va.Clear();
@@ -103,10 +104,10 @@ namespace ObjetosTridimencionais
                 double x = v.getX(), y = v.getY(), z = v.getZ();
 
                 double[,] mat = {
-                    { x},
-                    { y},
-                    { z},
-                    { 1}
+                    {x},
+                    {y},
+                    {z},
+                    {1}
                 };
 
                 double[,] result = mult_mat(mat_a, mat);
@@ -116,13 +117,13 @@ namespace ObjetosTridimencionais
             }
         }
 
-        public void translacao(int dx, int dy, int dz)
+        public void translacao(int tx, int ty, int tz)
         {
             double[,] mat = {
-                { 1, 0, 0, dx },
-                { 0, 1, 0, dy},
-                { 0, 0, 0, dz},
-                { 0, 0, 0, 1}
+                {1, 0, 0, tx},
+                {0, 1, 0, ty},
+                {0, 0, 1, tz},
+                {0, 0, 0, 1}
             };
 
             mat_a = mult_mat(mat, mat_a);
@@ -131,15 +132,16 @@ namespace ObjetosTridimencionais
         public void escala(double value)
         {
             double[,] mat = {
-                { value, 0, 0, 0},
-                { 0, value, 0 ,0},
-                { 0, 0, value, 0},
-                { 0, 0, 0, 1 }
+                {value, 0, 0, 0},
+                {0, value, 0 ,0},
+                {0, 0, value, 0},
+                { 0,  0,  0,  1}
             };
 
             mat_a = mult_mat(mat, mat_a);
         }
         #endregion
+
         #region Metodos Auxiliares
 
         //algoritmo do ponto médio para traçado de retas
@@ -215,18 +217,18 @@ namespace ObjetosTridimencionais
         //multiplacao de matrizes
         private double[,] mult_mat(double[,] m1, double[,] m2)
         {
-            double soma = 0;
             double[,] result = new double[m1.GetLength(0), m2.GetLength(1)];
-            for (int linha = 0; linha < m1.GetLength(0); linha++)
+            double soma = 0;
+            for(int lin = 0; lin < m1.GetLength(0); lin++)
             {
-                for (int coluna = 0; coluna < m2.GetLength(1); coluna++)
+                for(int col = 0; col < m2.GetLength(1); col++)
                 {
-                    for (int i = 0; i < 2; i++)
+                    for(int i = 0; i < m2.GetLength(0); i++)
                     {
-                        soma += m1[linha, i] * m2[i, coluna];
+                        soma += m1[lin, i] * m2[i, col];
                     }
-                    result[linha, coluna] = soma;
 
+                    result[lin, col] = soma;
                     soma = 0;
                 }
             }

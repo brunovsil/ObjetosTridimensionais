@@ -70,7 +70,7 @@ namespace ObjetosTridimencionais
                 if (botao == 'r')
                 {
                     int dx = e.X - ponto_ini.X, dy = e.Y - ponto_ini.Y, dz = 0;
-
+                    ponto_ini = e.Location;
                     _control.translacao(dx, dy, dz, img);
                 }
 
@@ -86,6 +86,7 @@ namespace ObjetosTridimencionais
         private void pbCanvas_MouseWheel(object sender, MouseEventArgs e)
         {
             img = new Bitmap(pbCanvas.Width, pbCanvas.Height);
+
             if (e.Delta > 0)
                 _control.escala(1.1, img);
             else
@@ -95,6 +96,5 @@ namespace ObjetosTridimencionais
         }
 
         #endregion
-
     }    
 }
