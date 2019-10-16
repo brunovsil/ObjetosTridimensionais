@@ -13,12 +13,17 @@ namespace ObjetosTridimencionais
         private int TL;
 
         public Face(){ this.TL = 0; }
-        
-        //getters e setters
+
+
+        #region Getters e Setters
+
         public void addIndex(int i) { vetIndex[this.TL++] = i; }
         public int[] getVet() { return vetIndex; }
 
-        //metodos
+        #endregion
+
+        #region Métodos
+
         public void scanLine(Vertice[] list_v, Color c, Bitmap img)
         {
             List<List<NodoET>> et = new List<List<NodoET>>();
@@ -58,5 +63,7 @@ namespace ObjetosTridimencionais
                 et[(int)Math.Round(ymin)].Add(nodo);
             }
         }
+
+        #endregion
     }
 }

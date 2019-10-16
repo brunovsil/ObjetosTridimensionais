@@ -13,6 +13,8 @@ namespace ObjetosTridimencionais
         List<Vertice> list_v = new List<Vertice>(); //lista de vertices originais
         List<Vertice> list_va = new List<Vertice>(); //lista de vertices atuais
         List<Face> list_f = new List<Face>();
+
+        double[] centro = new double[3];
         double[,] mat_a = {
                 {1, 0, 0, 0},
                 {0, 1, 0, 0},
@@ -68,6 +70,8 @@ namespace ObjetosTridimencionais
             }
 
             sr.Close();
+
+            calculaCentro();
         }
 
         //desenha o objeto por projeção paralela
@@ -115,6 +119,8 @@ namespace ObjetosTridimencionais
                 Vertice vn = new Vertice(result[0,0], result[1,0], result[2,0]);
                 list_va.Add(vn);
             }
+
+            calculaCentro();
         }
 
         public void translacao(int tx, int ty, int tz)
@@ -131,6 +137,8 @@ namespace ObjetosTridimencionais
 
         public void escala(double value)
         {
+            translacao((int)-centro[0], (int)-centro[1], (int)-centro[2]);
+
             double[,] mat = {
                 {value, 0, 0, 0},
                 {0, value, 0 ,0},
@@ -139,6 +147,8 @@ namespace ObjetosTridimencionais
             };
 
             mat_a = mult_mat(mat, mat_a);
+
+            translacao((int)centro[0], (int)centro[1], (int)centro[2]);
         }
         #endregion
 
@@ -235,6 +245,76 @@ namespace ObjetosTridimencionais
 
             return result;
         }
+
+        private void calculaCentro()
+        {
+            centro[0] = maxX() - minX();
+            centro[1] = maxY() - minX();
+            centro[2] = maxZ() - minX();
+        }
+
+        #region Max e Min
+
+        private double minX()
+        {
+            double min = 99999;
+            foreach (Vertice v in list_v)
+                if (v.getX() < min)
+                    min = v.getX();
+
+            return min;
+        }
+
+        private double minY()
+        {
+            double min = 99999;
+            foreach (Vertice v in list_v)
+                if (v.getY() < min)
+                    min = v.getY();
+
+            return min;
+        }
+
+        private double minZ()
+        {
+            double min = 99999;
+            foreach (Vertice v in list_v)
+                if (v.getZ() < min)
+                    min = v.getZ();
+
+            return min;
+        }
+
+        private double maxX()
+        {
+            double max = -99999;
+            foreach (Vertice v in list_v)
+                if (v.getX() > max)
+                    max = v.getX();
+
+            return max;
+        }
+
+        private double maxY()
+        {
+            double max = -99999;
+            foreach (Vertice v in list_v)
+                if (v.getY() > max)
+                    max = v.getY();
+
+            return max;
+        }
+
+        private double maxZ()
+        {
+            double max = -99999;
+            foreach (Vertice v in list_v)
+                if (v.getZ() > max)
+                    max = v.getZ();
+
+            return max;
+        }
+        #endregion
 
         #endregion
     }

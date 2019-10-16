@@ -74,6 +74,7 @@ namespace ObjetosTridimencionais
                     _control.translacao(dx, dy, dz, img);
                 }
 
+                pbCanvas.Image.Dispose();
                 pbCanvas.Image = img;
             }
         }
@@ -81,6 +82,7 @@ namespace ObjetosTridimencionais
         private void pbCanvas_MouseUp(object sender, MouseEventArgs e)
         {
             flag_down = false;
+            botao = 'n';
         }
 
         private void pbCanvas_MouseWheel(object sender, MouseEventArgs e)
@@ -92,6 +94,7 @@ namespace ObjetosTridimencionais
             else
                 _control.escala(0.9, img);
 
+            pbCanvas.Image.Dispose();
             pbCanvas.Image = img;
         }
 

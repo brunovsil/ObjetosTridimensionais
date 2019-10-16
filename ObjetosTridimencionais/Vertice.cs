@@ -19,7 +19,8 @@ namespace ObjetosTridimencionais
             this.z = z;
         }
 
-        //getters e setters
+        #region Getters e Setters
+
         public double getX() { return this.x; }
         public void setX(double x) { this.x = x; }
 
@@ -28,5 +29,7 @@ namespace ObjetosTridimencionais
 
         public double getZ() { return this.z; }
         public void setZ(double z) { this.z = z; }
+
+        #endregion
     }
 }
