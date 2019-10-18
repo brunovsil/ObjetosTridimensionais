@@ -13,7 +13,7 @@ namespace ObjetosTridimencionais
     public partial class frmMain : Form
     {
         ControlMain _control;
-        Bitmap img;
+        DirectBitmap img;
         Point ponto_ini; //ponto inicial do click
         bool flag_down = false; //saber se está clickado
         char botao = 'n'; //determina o botao do mouse
@@ -24,9 +24,6 @@ namespace ObjetosTridimencionais
             pbCanvas.Size = new Size((int)(this.Size.Width * 0.8), this.Size.Height);
             pbCanvas.MouseWheel += pbCanvas_MouseWheel;
             _control = new ControlMain();
-
-            pbCanvas.Image = img;
-
         }
 
         private void AbrirToolStripMenuItem_Click(object sender, EventArgs e)
@@ -40,8 +37,8 @@ namespace ObjetosTridimencionais
 
             if (ofdAbrir.ShowDialog() == DialogResult.OK)
             {
-                img = new Bitmap(pbCanvas.Width, pbCanvas.Height);
-                pbCanvas.Image = img;
+                img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
+                pbCanvas.Image = img.Bitmap;
                 _control.lerObjeto(ofdAbrir.FileName, img);
                 pbCanvas.Refresh();
             }
@@ -65,7 +62,8 @@ namespace ObjetosTridimencionais
         {
             if(flag_down)
             {
-                img = new Bitmap(pbCanvas.Width, pbCanvas.Height);
+                img.Dispose();
+                img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
 
                 if (botao == 'r')
                 {
@@ -75,7 +73,7 @@ namespace ObjetosTridimencionais
                 }
 
                 pbCanvas.Image.Dispose();
-                pbCanvas.Image = img;
+                pbCanvas.Image = img.Bitmap;
             }
         }
 
@@ -87,7 +85,8 @@ namespace ObjetosTridimencionais
 
         private void pbCanvas_MouseWheel(object sender, MouseEventArgs e)
         {
-            img = new Bitmap(pbCanvas.Width, pbCanvas.Height);
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
 
             if (e.Delta > 0)
                 _control.escala(1.1, img);
@@ -95,7 +94,7 @@ namespace ObjetosTridimencionais
                 _control.escala(0.9, img);
 
             pbCanvas.Image.Dispose();
-            pbCanvas.Image = img;
+            pbCanvas.Image = img.Bitmap;
         }
 
         #endregion

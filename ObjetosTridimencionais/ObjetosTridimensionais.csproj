@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControlMain.cs" />
+    <Compile Include="DirectBitmap.cs" />
     <Compile Include="Face.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>

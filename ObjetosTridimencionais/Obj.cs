@@ -75,7 +75,7 @@ namespace ObjetosTridimencionais
         }
 
         //desenha o objeto por projeção paralela
-        public void desenha_pp(Bitmap img)
+        public void desenha_pp(DirectBitmap img)
         {
             //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
             Point meio = new Point(img.Width / 2, img.Height / 2);
@@ -120,7 +120,7 @@ namespace ObjetosTridimencionais
                 list_va.Add(vn);
             }
 
-            calculaCentro();
+            calculaCentro() ;
         }
 
         public void translacao(int tx, int ty, int tz)
@@ -135,10 +135,8 @@ namespace ObjetosTridimencionais
             mat_a = mult_mat(mat, mat_a);
         }
 
-        public void escala(double value)
+        public void escala(double value, DirectBitmap img)
         {
-            translacao((int)-centro[0], (int)-centro[1], (int)-centro[2]);
-
             double[,] mat = {
                 {value, 0, 0, 0},
                 {0, value, 0 ,0},
@@ -146,16 +144,14 @@ namespace ObjetosTridimencionais
                 { 0,  0,  0,  1}
             };
 
-            mat_a = mult_mat(mat, mat_a);
-
-            translacao((int)centro[0], (int)centro[1], (int)centro[2]);
+            mat_a = mult_mat(mat_a, mat);
         }
         #endregion
 
         #region Metodos Auxiliares
 
         //algoritmo do ponto médio para traçado de retas
-        private void desenha_reta(Point ini, Point fim, Bitmap img)
+        private void desenha_reta(Point ini, Point fim, DirectBitmap img)
         {
             int declive = 1;
             int dx, dy, incE, incNE, d, x, y;
@@ -219,7 +215,7 @@ namespace ObjetosTridimencionais
         }
 
         //verifica se o ponto x pertence a imagem img
-        private bool verifica_borda(Point x, Bitmap img)
+        private bool verifica_borda(Point x, DirectBitmap img)
         {
             return (x.X > 0 && x.Y > 0 && x.X < img.Width && x.Y < img.Height);
         }
@@ -248,9 +244,9 @@ namespace ObjetosTridimencionais
 
         private void calculaCentro()
         {
-            centro[0] = maxX() - minX();
-            centro[1] = maxY() - minX();
-            centro[2] = maxZ() - minX();
+            centro[0] = minX() + (maxX() - minX()) / 2;
+            centro[1] = minY() + (maxY() - minY()) / 2;
+            centro[2] = minZ() + (maxZ() - minZ()) / 2;
         }
 
         #region Max e Min
