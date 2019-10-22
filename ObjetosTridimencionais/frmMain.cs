@@ -16,6 +16,7 @@ namespace ObjetosTridimencionais
         DirectBitmap img;
         Point ponto_ini; //ponto inicial do click
         bool flag_down = false; //saber se está clickado
+        bool flag_ctrl = false; //saber se o control está pressionado
         char botao = 'n'; //determina o botao do mouse
 
         public frmMain()
@@ -27,6 +28,11 @@ namespace ObjetosTridimencionais
         }
 
         private void AbrirToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            abrir();
+        }
+
+        private void abrir()
         {
             ofdAbrir = new OpenFileDialog()
             {
@@ -50,17 +56,22 @@ namespace ObjetosTridimencionais
         {
             flag_down = true;
 
-            if (e.Button == MouseButtons.Right)
-            {
-                botao = 'r';
-                ponto_ini = e.Location;
-            }
+            if(_control.getObj() != null)
+                if (e.Button == MouseButtons.Right)
+                {
+                    botao = 'r';
+                    ponto_ini = e.Location;
+                }else if(e.Button == MouseButtons.Left)
+                {
+                    botao = 'l';
+                    ponto_ini = e.Location;
+                }
                 
         }
 
         private void pbCanvas_MouseMove(object sender, MouseEventArgs e)
         {
-            if(flag_down)
+            if(flag_down && _control.getObj() != null)
             {
                 img.Dispose();
                 img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
@@ -68,8 +79,19 @@ namespace ObjetosTridimencionais
                 if (botao == 'r')
                 {
                     int dx = e.X - ponto_ini.X, dy = e.Y - ponto_ini.Y, dz = 0;
+                    
                     ponto_ini = e.Location;
                     _control.translacao(dx, dy, dz, img);
+                }
+                else if(botao == 'l')
+                {
+                    int dx = e.X - ponto_ini.X, dy = e.Y - ponto_ini.Y;
+
+                    ponto_ini = e.Location;
+                    if (flag_ctrl)
+                        _control.rotacao(0, 0, 3, img);
+                    else
+                        _control.rotacao(dy, dx, 0, img);
                 }
 
                 pbCanvas.Image.Dispose();
@@ -85,18 +107,48 @@ namespace ObjetosTridimencionais
 
         private void pbCanvas_MouseWheel(object sender, MouseEventArgs e)
         {
-            img.Dispose();
-            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
+            if(_control.getObj() != null)
+            {
+                img.Dispose();
+                img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
 
-            if (e.Delta > 0)
-                _control.escala(1.1, img);
-            else
-                _control.escala(0.9, img);
+                if (flag_ctrl)
+                {
+                    _control.translacao(0, 0, 1, img);
+                }
+                else
+                {
+                    if (e.Delta > 0)
+                        _control.escala(1.1, img);
+                    else
+                        _control.escala(0.9, img);
+                }
+                
 
-            pbCanvas.Image.Dispose();
-            pbCanvas.Image = img.Bitmap;
+                pbCanvas.Image.Dispose();
+                pbCanvas.Image = img.Bitmap;
+            }
         }
 
+        private void pbCanvas_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (_control.getObj() == null)
+                abrir();
+        }
+
+
         #endregion
+
+        private void frmMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control)
+                flag_ctrl = true;
+        }
+
+        private void frmMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (!e.Control)
+                flag_ctrl = false;
+        }
     }    
 }

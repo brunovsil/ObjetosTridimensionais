@@ -13,6 +13,8 @@ namespace ObjetosTridimencionais
 
         public ControlMain() { }
 
+        public Obj getObj() { return this.obj; }
+
         public void lerObjeto(string caminho, DirectBitmap img)
         {
             obj = new Obj();
@@ -30,6 +32,15 @@ namespace ObjetosTridimencionais
         public void escala(double value, DirectBitmap img)
         {
             obj.escala(value, img);
+            obj.aplica_transformacoes();
+            obj.desenha_pp(img);
+        }
+
+        public void rotacao(int ang_x, int ang_y, int ang_z, DirectBitmap img)
+        {
+            obj.rotacaoX((ang_x * Math.PI) / 180);
+            obj.rotacaoY((ang_y * Math.PI) / 180);
+            obj.rotacaoZ((ang_z * Math.PI) / 180);
             obj.aplica_transformacoes();
             obj.desenha_pp(img);
         }

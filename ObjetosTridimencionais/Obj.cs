@@ -12,6 +12,7 @@ namespace ObjetosTridimencionais
     {
         List<Vertice> list_v = new List<Vertice>(); //lista de vertices originais
         List<Vertice> list_va = new List<Vertice>(); //lista de vertices atuais
+        List<VetorNormal> list_vn = new List<VetorNormal>(); //lista de vetores normais
         List<Face> list_f = new List<Face>();
 
         double[] centro = new double[3];
@@ -30,11 +31,13 @@ namespace ObjetosTridimencionais
         #region Getters e Setters
         public List<Vertice> getVertices() { return list_va; }
         public void addVertice(Vertice v) { this.list_v.Add(v); this.list_va.Add(v); }
+        public void addVetorNormal(VetorNormal vn) { this.list_vn.Add(vn); }
 
         public List<Face> getFaces() { return list_f; }
         public void addFace(Face f) { this.list_f.Add(f); }
 
         #endregion
+
         //carrega o objeto a partir de um arquivo obj
         public void carregar(string caminho)
         {
@@ -67,6 +70,16 @@ namespace ObjetosTridimencionais
 
                     addFace(f);
                 }
+                else if (linha[0].Equals("vn"))//define uma nova face
+                {
+                    VetorNormal vn = new VetorNormal();
+
+                    vn.setX(Convert.ToDouble(linha[1].Replace('.', ',').Replace('E', 'e')));
+                    vn.setY(Convert.ToDouble(linha[2].Replace('.', ',').Replace('E', 'e')));
+                    vn.setZ(Convert.ToDouble(linha[3].Replace('.', ',').Replace('E', 'e')));
+
+                    addVetorNormal(vn);
+                }
             }
 
             sr.Close();
@@ -97,6 +110,32 @@ namespace ObjetosTridimencionais
             }
         }
 
+        //desenha o objeto por Backface Culling
+        public void desenha_bc(DirectBitmap img)
+        {
+            //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
+            Point meio = new Point(img.Width / 2, img.Height / 2);
+
+            //para cada face
+            foreach (Face f in list_f)
+            {
+                int[] _vet = f.getVet();
+
+                if(list_vn[_vet[2] - 1].getZ() >= 0)
+                {
+                    //vertices da face
+                    Point p1 = new Point((int)list_va[_vet[0] - 1].getX() + meio.X, (int)list_va[_vet[0] - 1].getY() + meio.Y);
+                    Point p2 = new Point((int)list_va[_vet[1] - 1].getX() + meio.X, (int)list_va[_vet[1] - 1].getY() + meio.Y);
+                    Point p3 = new Point((int)list_va[_vet[2] - 1].getX() + meio.X, (int)list_va[_vet[2] - 1].getY() + meio.Y);
+
+                    //desenha as ligações dos vertices (regra da mão direita)
+                    desenha_reta(p1, p2, img);
+                    desenha_reta(p2, p3, img);
+                    desenha_reta(p3, p1, img);
+                }
+            }
+        }
+
         #region Transformacoes
 
         //multiplica todos os pontos originais pela matriz de tranformação acumulada - definindo os pontos atuais
@@ -123,6 +162,18 @@ namespace ObjetosTridimencionais
             calculaCentro() ;
         }
 
+        public void escala(double value, DirectBitmap img)
+        {
+            double[,] mat = {
+                {value, 0, 0, 0},
+                {0, value, 0 ,0},
+                {0, 0, value, 0},
+                { 0,  0,  0,  1}
+            };
+
+            mat_a = mult_mat(mat_a, mat);
+        }
+
         public void translacao(int tx, int ty, int tz)
         {
             double[,] mat = {
@@ -135,17 +186,42 @@ namespace ObjetosTridimencionais
             mat_a = mult_mat(mat, mat_a);
         }
 
-        public void escala(double value, DirectBitmap img)
+        public void rotacaoX(double ang)
         {
             double[,] mat = {
-                {value, 0, 0, 0},
-                {0, value, 0 ,0},
-                {0, 0, value, 0},
-                { 0,  0,  0,  1}
+                {1, 0, 0, 0},
+                {0, Math.Cos(ang), -Math.Sin(ang), 0},
+                {0, Math.Sin(ang), Math.Cos(ang), 0 },
+                {0, 0, 0, 1}
             };
 
             mat_a = mult_mat(mat_a, mat);
         }
+
+        public void rotacaoY(double ang)
+        {
+            double[,] mat = {
+                {Math.Cos(ang), 0, Math.Sin(ang), 0},
+                {0, 1, 0, 0},
+                {-Math.Sin(ang), 0, Math.Cos(ang), 0},
+                {0, 0, 0, 1}
+            };
+
+            mat_a = mult_mat(mat_a, mat);
+        }
+
+        public void rotacaoZ(double ang)
+        {
+            double[,] mat = {
+                {Math.Cos(ang), -Math.Sin(ang), 0, 0},
+                {Math.Sin(ang), Math.Cos(ang), 0, 0},
+                {0, 0, 1, 0},
+                {0, 0, 0, 1}
+            };
+
+            mat_a = mult_mat(mat_a, mat);
+        }
+
         #endregion
 
         #region Metodos Auxiliares
@@ -247,6 +323,13 @@ namespace ObjetosTridimencionais
             centro[0] = minX() + (maxX() - minX()) / 2;
             centro[1] = minY() + (maxY() - minY()) / 2;
             centro[2] = minZ() + (maxZ() - minZ()) / 2;
+        }
+
+        private int prodEscalar(VetorNormal v1, VetorNormal v2)
+        {
+            
+
+            return 1;
         }
 
         #region Max e Min
