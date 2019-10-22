@@ -110,7 +110,7 @@ namespace ObjetosTridimencionais
             }
         }
 
-        //desenha o objeto por Backface Culling
+        //desenha o objeto por Backface Culling não feito ainda
         public void desenha_bc(DirectBitmap img)
         {
             //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
