@@ -9,16 +9,17 @@ namespace ObjetosTridimencionais
 {
     class Face
     {
-        private int[] vetIndex = new int[3];
-        private int TL;
+        private List<int> listIndex = new List<int>();
+        private double[] vetNormal = new double[3];
 
-        public Face(){ this.TL = 0; }
-
+        public Face(){ }
 
         #region Getters e Setters
 
-        public void addIndex(int i) { vetIndex[this.TL++] = i; }
-        public int[] getVet() { return vetIndex; }
+        public void addIndex(int i) { listIndex.Add(i); }
+        public List<int> getVet() { return listIndex; }
+        public double[] getNormal() { return vetNormal; }
+        public void setNormal(double[] v) { vetNormal = v; }
 
         #endregion
 
@@ -36,26 +37,26 @@ namespace ObjetosTridimencionais
 
                 //definindo valores
                 double ymin, ymax, xmax, xmin;
-                if (list_v[vetIndex[i]].getY() < list_v[vetIndex[prox]].getY())
+                if (list_v[listIndex[i]].getY() < list_v[listIndex[prox]].getY())
                 {
-                    ymin = list_v[vetIndex[i]].getY();
-                    ymax = list_v[vetIndex[prox]].getY();
+                    ymin = list_v[listIndex[i]].getY();
+                    ymax = list_v[listIndex[prox]].getY();
                 }
                 else
                 {
-                    ymin = list_v[vetIndex[prox]].getY();
-                    ymax = list_v[vetIndex[i]].getY();
+                    ymin = list_v[listIndex[prox]].getY();
+                    ymax = list_v[listIndex[i]].getY();
                 }
 
-                if (list_v[vetIndex[i]].getX() > list_v[vetIndex[prox]].getX())
+                if (list_v[listIndex[i]].getX() > list_v[listIndex[prox]].getX())
                 {
-                    xmin = list_v[vetIndex[i]].getX();
-                    xmax = list_v[vetIndex[prox]].getX();
+                    xmin = list_v[listIndex[i]].getX();
+                    xmax = list_v[listIndex[prox]].getX();
                 }
                 else
                 {
-                    xmin = list_v[vetIndex[prox]].getX();
-                    xmax = list_v[vetIndex[i]].getX();
+                    xmin = list_v[listIndex[prox]].getX();
+                    xmax = list_v[listIndex[i]].getX();
                 }
 
                 //definindo o nodo e adicionando a ET

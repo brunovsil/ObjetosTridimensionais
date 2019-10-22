@@ -12,7 +12,6 @@ namespace ObjetosTridimencionais
     {
         List<Vertice> list_v = new List<Vertice>(); //lista de vertices originais
         List<Vertice> list_va = new List<Vertice>(); //lista de vertices atuais
-        List<VetorNormal> list_vn = new List<VetorNormal>(); //lista de vetores normais
         List<Face> list_f = new List<Face>();
 
         double[] centro = new double[3];
@@ -31,7 +30,6 @@ namespace ObjetosTridimencionais
         #region Getters e Setters
         public List<Vertice> getVertices() { return list_va; }
         public void addVertice(Vertice v) { this.list_v.Add(v); this.list_va.Add(v); }
-        public void addVetorNormal(VetorNormal vn) { this.list_vn.Add(vn); }
 
         public List<Face> getFaces() { return list_f; }
         public void addFace(Face f) { this.list_f.Add(f); }
@@ -70,16 +68,6 @@ namespace ObjetosTridimencionais
 
                     addFace(f);
                 }
-                else if (linha[0].Equals("vn"))//define uma nova face
-                {
-                    VetorNormal vn = new VetorNormal();
-
-                    vn.setX(Convert.ToDouble(linha[1].Replace('.', ',').Replace('E', 'e')));
-                    vn.setY(Convert.ToDouble(linha[2].Replace('.', ',').Replace('E', 'e')));
-                    vn.setZ(Convert.ToDouble(linha[3].Replace('.', ',').Replace('E', 'e')));
-
-                    addVetorNormal(vn);
-                }
             }
 
             sr.Close();
@@ -96,44 +84,25 @@ namespace ObjetosTridimencionais
             //para cada face
             foreach (Face f in list_f)
             {
-                int[] _vet = f.getVet();
+                List<int> _vet = f.getVet();
+                List<Point> list_p = new List<Point>();
 
                 //vertices da face
-                Point p1 = new Point((int)list_va[_vet[0] - 1].getX() + meio.X, (int)list_va[_vet[0] - 1].getY() + meio.Y);
-                Point p2 = new Point((int)list_va[_vet[1] - 1].getX() + meio.X, (int)list_va[_vet[1] - 1].getY() + meio.Y);
-                Point p3 = new Point((int)list_va[_vet[2] - 1].getX() + meio.X, (int)list_va[_vet[2] - 1].getY() + meio.Y);
+                for(int i = 0; i < _vet.Count; i++)
+                    list_p.Add(new Point((int)list_va[_vet[i] - 1].getX() + meio.X, (int)list_va[_vet[i] - 1].getY() + meio.Y));
 
                 //desenha as ligações dos vertices (regra da mão direita)
-                desenha_reta(p1, p2, img);
-                desenha_reta(p2, p3, img);
-                desenha_reta(p3, p1, img);
+                for (int i = 0; i < list_p.Count - 1; i++ )
+                    desenha_reta(list_p[i], list_p[i + 1], img);
+
+                desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
             }
         }
 
         //desenha o objeto por Backface Culling não feito ainda
         public void desenha_bc(DirectBitmap img)
         {
-            //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
-            Point meio = new Point(img.Width / 2, img.Height / 2);
-
-            //para cada face
-            foreach (Face f in list_f)
-            {
-                int[] _vet = f.getVet();
-
-                if(list_vn[_vet[2] - 1].getZ() >= 0)
-                {
-                    //vertices da face
-                    Point p1 = new Point((int)list_va[_vet[0] - 1].getX() + meio.X, (int)list_va[_vet[0] - 1].getY() + meio.Y);
-                    Point p2 = new Point((int)list_va[_vet[1] - 1].getX() + meio.X, (int)list_va[_vet[1] - 1].getY() + meio.Y);
-                    Point p3 = new Point((int)list_va[_vet[2] - 1].getX() + meio.X, (int)list_va[_vet[2] - 1].getY() + meio.Y);
-
-                    //desenha as ligações dos vertices (regra da mão direita)
-                    desenha_reta(p1, p2, img);
-                    desenha_reta(p2, p3, img);
-                    desenha_reta(p3, p1, img);
-                }
-            }
+            
         }
 
         #region Transformacoes
@@ -325,11 +294,12 @@ namespace ObjetosTridimencionais
             centro[2] = minZ() + (maxZ() - minZ()) / 2;
         }
 
-        private int prodEscalar(VetorNormal v1, VetorNormal v2)
+        private void atualizaNormais()
         {
-            
+            foreach(Face f in list_f)
+            {
 
-            return 1;
+            }
         }
 
         #region Max e Min
