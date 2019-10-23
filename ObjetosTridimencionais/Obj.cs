@@ -73,6 +73,7 @@ namespace ObjetosTridimencionais
             sr.Close();
 
             calculaCentro();
+            atualizaNormais();
         }
 
         //desenha o objeto por projeção paralela
@@ -84,25 +85,24 @@ namespace ObjetosTridimencionais
             //para cada face
             foreach (Face f in list_f)
             {
-                List<int> _vet = f.getVet();
-                List<Point> list_p = new List<Point>();
+                //exibe caso a componente z for maior ou igual a 0 (só funciona caso o observador esteja no eixo Z)
+                if (f.getNormal()[2] >= 0)
+                {
+                    List<int> _vet = f.getVet();
+                    List<Point> list_p = new List<Point>();
 
-                //vertices da face
-                for(int i = 0; i < _vet.Count; i++)
-                    list_p.Add(new Point((int)list_va[_vet[i] - 1].getX() + meio.X, (int)list_va[_vet[i] - 1].getY() + meio.Y));
+                    //vertices da face
+                    for (int i = 0; i < _vet.Count; i++)
+                        list_p.Add(new Point((int)list_va[_vet[i] - 1].getX() + meio.X, (int)list_va[_vet[i] - 1].getY() + meio.Y));
 
-                //desenha as ligações dos vertices (regra da mão direita)
-                for (int i = 0; i < list_p.Count - 1; i++ )
-                    desenha_reta(list_p[i], list_p[i + 1], img);
+                    //desenha as ligações dos vertices (regra da mão direita)
+                    for (int i = 0; i < list_p.Count - 1; i++)
+                        desenha_reta(list_p[i], list_p[i + 1], img);
 
-                desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
+                    desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
+                }
+                
             }
-        }
-
-        //desenha o objeto por Backface Culling não feito ainda
-        public void desenha_bc(DirectBitmap img)
-        {
-            
         }
 
         #region Transformacoes
@@ -128,7 +128,8 @@ namespace ObjetosTridimencionais
                 list_va.Add(vn);
             }
 
-            calculaCentro() ;
+            calculaCentro();
+            atualizaNormais();
         }
 
         public void escala(double value, DirectBitmap img)
@@ -298,10 +299,16 @@ namespace ObjetosTridimencionais
         {
             foreach(Face f in list_f)
             {
+                List<Vertice> lv = new List<Vertice>();
+                List<int> _vet = f.getVet();
 
+                foreach(int i in _vet)
+                    lv.Add(list_va[i - 1]);
+
+                f.calcNormal(lv);
             }
         }
-
+        
         #region Max e Min
 
         private double minX()
