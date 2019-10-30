@@ -85,8 +85,12 @@ namespace ObjetosTridimencionais
             //para cada face
             foreach (Face f in list_f)
             {
-                //exibe caso a componente z for maior ou igual a 0 (só funciona caso o observador esteja no eixo Z)
-                if (f.getNormal()[2] >= 0)
+                double[] obs = new double[3];
+                obs[0] = 0; //x
+                obs[1] = 0; //y
+                obs[2] = 1; //z
+
+                if (Vetores.prodEscalar(f.getNormal(), obs) > 0) //backface culling
                 {
                     List<int> _vet = f.getVet();
                     List<Point> list_p = new List<Point>();

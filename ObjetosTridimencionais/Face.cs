@@ -78,46 +78,14 @@ namespace ObjetosTridimencionais
             vet1[0] = B.getX() - A.getX(); vet1[1] = B.getY() - A.getY(); vet1[2] = B.getZ() - A.getZ(); //define x, y e z
             vet2[0] = C.getX() - A.getX(); vet2[1] = C.getY() - A.getY(); vet2[2] = C.getZ() - A.getZ(); //define x, y e z
 
-            double[] vn = prodVetorial(vet1, vet2);
+            double[] vn = Vetores.prodVetorial(vet1, vet2);
 
-            vn = normalizaVetor(vn);
+            vn = Vetores.normalizaVetor(vn);
 
             vetNormal = vn;
         }
 
         #endregion
 
-        #region Métodos auxiliares
-
-        private double[] prodVetorial(double[] u, double[] v)
-        {
-            double[] r = new double[3];
-
-            r[0] = u[1] * v[2] - u[2] * v[1];
-            r[1] = u[2] * v[0] - u[0] * v[2];
-            r[2] = u[0] * v[1] - u[1] * v[0];
-
-            return r;
-        }
-
-        private double prodEscalar(double[] u, double[] v)
-        {
-            return u[0] * v[0] + u[1] * v[1] + u[2] * v[2];
-        }
-
-        private double[] normalizaVetor(double[] v)
-        {
-            double[] r = new double[3];
-
-            double norma = Math.Sqrt(Math.Pow(v[0], 2) + Math.Pow(v[1], 2) + Math.Pow(v[2], 2));
-
-            r[0] = v[0] / norma;
-            r[1] = v[1] / norma;
-            r[2] = v[2] / norma;
-
-            return r;
-        }
-
-        #endregion
     }
 }
