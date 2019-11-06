@@ -14,7 +14,7 @@ namespace ObjetosTridimencionais
         List<Vertice> list_va = new List<Vertice>(); //lista de vertices atuais
         List<Face> list_f = new List<Face>();
 
-        double[] centro = new double[3];
+        Vertice centro = new Vertice();
         double[,] mat_a = {
                 {1, 0, 0, 0},
                 {0, 1, 0, 0},
@@ -138,14 +138,18 @@ namespace ObjetosTridimencionais
             //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
             Point meio = new Point(img.Width / 2, img.Height / 2);
 
-            double alfa, beta = 63.4, L;
+            double alfa = 30, beta = 63.4, L = 1;
 
             if (proj == '4') //cabinet
-                beta = 63.4;
+            {
+                L = 0.5;
+                alfa = 30;
+            }
             else if (proj == '5') //cavaleira
-                beta = 45;
-
-            alfa = 180 - beta;
+            {
+                L = 1.0;
+                alfa = 63.4;
+            }
 
             //para cada face
             foreach (Face f in list_f)
@@ -158,8 +162,6 @@ namespace ObjetosTridimencionais
                 {
                     double x = list_va[_vet[i] - 1].getX(), y = list_va[_vet[i] - 1].getY(), z = list_va[_vet[i] - 1].getZ();
                     double xp, yp;
-
-                    L = z / Math.Tan(beta);
 
                     //pontos projetados
                     xp = x + L * Math.Cos(alfa);
@@ -202,18 +204,6 @@ namespace ObjetosTridimencionais
             atualizaNormais();
         }
 
-        public void escala(double value, DirectBitmap img)
-        {
-            double[,] mat = {
-                {value, 0, 0, 0},
-                {0, value, 0 ,0},
-                {0, 0, value, 0},
-                { 0,  0,  0,  1}
-            };
-
-            mat_a = mult_mat(mat_a, mat);
-        }
-
         public void translacao(int tx, int ty, int tz)
         {
             double[,] mat = {
@@ -226,8 +216,26 @@ namespace ObjetosTridimencionais
             mat_a = mult_mat(mat, mat_a);
         }
 
+        public void escala(double value, DirectBitmap img)
+        {
+            translacao(-(int)centro.getX(), -(int)centro.getY(), 0);
+
+            double[,] mat = {
+                {value, 0, 0, 0},
+                {0, value, 0 ,0},
+                {0, 0, value, 0},
+                { 0,  0,  0,  1}
+            };
+
+            mat_a = mult_mat(mat, mat_a);
+
+            translacao((int)centro.getX(), (int)centro.getY(), 0);
+        }
+
         public void rotacaoX(double ang)
         {
+            translacao(-(int)centro.getX(), -(int)centro.getY(), 0);
+
             double[,] mat = {
                 {1, 0, 0, 0},
                 {0, Math.Cos(ang), -Math.Sin(ang), 0},
@@ -236,10 +244,14 @@ namespace ObjetosTridimencionais
             };
 
             mat_a = mult_mat(mat_a, mat);
+
+            translacao((int)centro.getX(), (int)centro.getY(), 0);
         }
 
         public void rotacaoY(double ang)
         {
+            translacao(-(int)centro.getX(), -(int)centro.getY(), 0);
+
             double[,] mat = {
                 {Math.Cos(ang), 0, Math.Sin(ang), 0},
                 {0, 1, 0, 0},
@@ -248,10 +260,14 @@ namespace ObjetosTridimencionais
             };
 
             mat_a = mult_mat(mat_a, mat);
+
+            translacao((int)centro.getX(), (int)centro.getY(), 0);
         }
 
         public void rotacaoZ(double ang)
         {
+            translacao(-(int)centro.getX(), -(int)centro.getY(), 0);
+
             double[,] mat = {
                 {Math.Cos(ang), -Math.Sin(ang), 0, 0},
                 {Math.Sin(ang), Math.Cos(ang), 0, 0},
@@ -259,7 +275,9 @@ namespace ObjetosTridimencionais
                 {0, 0, 0, 1}
             };
 
-            mat_a = mult_mat(mat_a, mat);
+            mat_a = mult_mat(mat, mat_a);
+
+            translacao((int)centro.getX(), (int)centro.getY(), 0);
         }
 
         #endregion
@@ -360,9 +378,22 @@ namespace ObjetosTridimencionais
 
         private void calculaCentro()
         {
-            centro[0] = minX() + (maxX() - minX()) / 2;
-            centro[1] = minY() + (maxY() - minY()) / 2;
-            centro[2] = minZ() + (maxZ() - minZ()) / 2;
+            double x = 0, y = 0, z = 0;
+
+            foreach (Vertice v in list_va)
+            {
+                x += v.getX();
+                y += v.getY();
+                z += v.getZ();
+            }
+
+            x /= list_va.Count;
+            y /= list_va.Count;
+            z /= list_va.Count;
+
+            centro.setX(x);
+            centro.setY(y);
+            centro.setZ(z);
         }
 
         private void atualizaNormais()
