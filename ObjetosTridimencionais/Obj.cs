@@ -76,20 +76,38 @@ namespace ObjetosTridimencionais
             atualizaNormais();
         }
 
-        //desenha o objeto por projeção paralela
-        public void desenha_pp(DirectBitmap img)
+        //desenha o objeto por projeção paralela ortográfica em X, Y ou Z
+        public void projecao_po(DirectBitmap img, char proj)
         {
             //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
             Point meio = new Point(img.Width / 2, img.Height / 2);
 
-            //para cada face
-            foreach (Face f in list_f)
+            //vetor de observação
+            double[] obs = new double[3];
+            obs[0] = 0; //x
+            obs[1] = 0; //y
+            obs[2] = 1; //z
+
+            if (proj == '3')
             {
-                double[] obs = new double[3];
+                obs[0] = 1; //x
+                obs[1] = 0; //y
+                obs[2] = 0; //z
+            }else if(proj == '2')
+            {
+                obs[0] = 0; //x
+                obs[1] = 1; //y
+                obs[2] = 0; //z
+            }else 
+            {
                 obs[0] = 0; //x
                 obs[1] = 0; //y
                 obs[2] = 1; //z
+            }
 
+            //para cada face
+            foreach (Face f in list_f)
+            {
                 if (Vetores.prodEscalar(f.getNormal(), obs) > 0) //backface culling
                 {
                     List<int> _vet = f.getVet();
@@ -97,15 +115,63 @@ namespace ObjetosTridimencionais
 
                     //vertices da face
                     for (int i = 0; i < _vet.Count; i++)
-                        list_p.Add(new Point((int)list_va[_vet[i] - 1].getX() + meio.X, (int)list_va[_vet[i] - 1].getY() + meio.Y));
+                        //verifica qual o eixo de projeção
+                        if(proj == '1')
+                            list_p.Add(new Point((int)list_va[_vet[i] - 1].getX() + meio.X, (int)list_va[_vet[i] - 1].getY() + meio.Y));
+                        else if(proj == '2')
+                            list_p.Add(new Point((int)list_va[_vet[i] - 1].getX() + meio.X, (int)list_va[_vet[i] - 1].getZ() + meio.Y));
+                        else if(proj == '3')
+                            list_p.Add(new Point((int)list_va[_vet[i] - 1].getY() + meio.X, (int)list_va[_vet[i] - 1].getZ() + meio.Y));
 
                     //desenha as ligações dos vertices (regra da mão direita)
                     for (int i = 0; i < list_p.Count - 1; i++)
                         desenha_reta(list_p[i], list_p[i + 1], img);
-
                     desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
                 }
                 
+            }
+        }
+
+        //desenha o objeto por projeção paralela oblíqua cabinet e cavaleira
+        public void projecao_pb(DirectBitmap img, char proj)
+        {
+            //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
+            Point meio = new Point(img.Width / 2, img.Height / 2);
+
+            double alfa, beta = 63.4, L;
+
+            if (proj == '4') //cabinet
+                beta = 63.4;
+            else if (proj == '5') //cavaleira
+                beta = 45;
+
+            alfa = 180 - beta;
+
+            //para cada face
+            foreach (Face f in list_f)
+            {
+                List<int> _vet = f.getVet();
+                List<Point> list_p = new List<Point>();
+
+                //vertices da face
+                for (int i = 0; i < _vet.Count; i++)
+                {
+                    double x = list_va[_vet[i] - 1].getX(), y = list_va[_vet[i] - 1].getY(), z = list_va[_vet[i] - 1].getZ();
+                    double xp, yp;
+
+                    L = z / Math.Tan(beta);
+
+                    //pontos projetados
+                    xp = x + L * Math.Cos(alfa);
+                    yp = y + L * Math.Sin(alfa);
+
+                    list_p.Add(new Point((int)xp + meio.X,(int)yp + meio.Y));
+                }
+
+                //desenha as ligações dos vertices (regra da mão direita)
+                for (int i = 0; i < list_p.Count - 1; i++)
+                    desenha_reta(list_p[i], list_p[i + 1], img);
+                desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
             }
         }
 

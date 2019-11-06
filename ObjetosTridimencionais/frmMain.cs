@@ -150,5 +150,30 @@ namespace ObjetosTridimencionais
             if (!e.Control)
                 flag_ctrl = false;
         }
+
+        private void eixoZToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _control.setProj(img, '1');
+        }
+
+        private void eixoYToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _control.setProj(img, '2');
+        }
+
+        private void eixoXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _control.setProj(img, '3');
+        }
+
+        private void cabinetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _control.setProj(img, '4');
+        }
+
+        private void cavaleiraToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _control.setProj(img, '5');
+        }
     }    
 }
