@@ -76,6 +76,52 @@ namespace ObjetosTridimencionais
             atualizaNormais();
         }
 
+        #region Modelos de Iluminação e Sombreamento e preenchimento
+
+        public void scanLine(Color c, Bitmap img)
+        {
+            List<NodoET>[] et = new List<NodoET>[img.Height];
+            List<NodoET> aet = new List<NodoET>();
+
+            foreach (Face f in list_f) //para cada face
+            {
+                List<int> _vet = f.getVet();
+                List<Point> list_p = new List<Point>();
+                Point pMin, pMax;
+                double yMax, xMin, incX;
+                NodoET nodo;
+
+                for (int i = 0; i < _vet.Count; i++)
+                    list_p.Add(new Point((int)list_va[_vet[i] - 1].getX(), (int)list_va[_vet[i] - 1].getY()));
+
+                for(int i = 0; i < list_p.Count - 1; i++)
+                {
+                    pMin = list_p[i].Y >= list_p[i + 1].Y ? list_p[i + 1] : list_p[i];
+                    pMax = list_p[i].Y >= list_p[i + 1].Y ? list_p[i] : list_p[i + 1];
+                    yMax = pMax.Y;
+                    xMin = pMin.X;
+                    incX = (pMax.X - pMin.X) / (pMax.Y - pMin.Y);
+
+                    nodo = new NodoET(yMax, xMin, incX);
+                    et[pMin.Y].Add(nodo);
+                }
+                pMin = list_p[list_p.Count].Y >= list_p[0].Y ? list_p[0] : list_p[list_p.Count];
+                pMax = list_p[list_p.Count].Y >= list_p[0].Y ? list_p[list_p.Count] : list_p[0];
+                yMax = pMax.Y;
+                xMin = pMin.X;
+                incX = (pMax.X - pMin.X) / (pMax.Y - pMin.Y);
+
+                nodo = new NodoET(yMax, xMin, incX);
+                et[pMin.Y].Add(nodo);
+
+
+            }
+        }
+
+        #endregion
+
+        #region Projecoes
+
         //desenha o objeto por projeção paralela ortográfica em X, Y ou Z
         public void projecao_po(DirectBitmap img, char proj)
         {
@@ -137,8 +183,13 @@ namespace ObjetosTridimencionais
         {
             //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
             Point meio = new Point(img.Width / 2, img.Height / 2);
+            double alfa = 30, L = 0.5;
 
-            double alfa = 30, beta = 63.4, L = 1;
+            //vetor de observação
+            double[] obs = new double[3];
+            obs[0] = 0; //x
+            obs[1] = 0; //y
+            obs[2] = 1; //z
 
             if (proj == '4') //cabinet
             {
@@ -164,10 +215,10 @@ namespace ObjetosTridimencionais
                     double xp, yp;
 
                     //pontos projetados
-                    xp = x + L * Math.Cos(alfa);
-                    yp = y + L * Math.Sin(alfa);
+                    xp = x + z * L * Math.Cos(alfa * Math.PI / 180);
+                    yp = y + z * L * Math.Sin(alfa * Math.PI / 180);
 
-                    list_p.Add(new Point((int)xp + meio.X,(int)yp + meio.Y));
+                    list_p.Add(new Point((int)xp + meio.X, (int)yp + meio.Y));
                 }
 
                 //desenha as ligações dos vertices (regra da mão direita)
@@ -176,6 +227,48 @@ namespace ObjetosTridimencionais
                 desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
             }
         }
+
+        //desenha o objeto por projeção perspectiva
+        public void projecao_pe(DirectBitmap img, char proj)
+        {
+            //acha o ponto médio do picture box em relação ao objeto que vai ser desenhado
+            Point meio = new Point(img.Width / 2, img.Height / 2);
+
+            //vetor de observação
+            double[] obs = new double[3];
+            obs[0] = 0; //x
+            obs[1] = 0; //y
+            obs[2] = 1; //z
+
+            //para cada face
+            foreach (Face f in list_f)
+            {
+                List<int> _vet = f.getVet();
+                List<Point> list_p = new List<Point>();
+
+                double d = 400; //distancia entre o ponto de observação e o plano de projeção
+
+                //vertices da face
+                for (int i = 0; i < _vet.Count; i++)
+                {
+                    double x = list_va[_vet[i] - 1].getX(), y = list_va[_vet[i] - 1].getY(), z = list_va[_vet[i] - 1].getZ();
+                    double xp, yp;
+
+                    //pontos projetados
+                    xp = x * d / (z + d);
+                    yp = y * d / (z + d);
+
+                    list_p.Add(new Point((int)xp + meio.X, (int)yp + meio.Y));
+                }
+
+                //desenha as ligações dos vertices (regra da mão direita)
+                for (int i = 0; i < list_p.Count - 1; i++)
+                    desenha_reta(list_p[i], list_p[i + 1], img);
+                desenha_reta(list_p[list_p.Count - 1], list_p[0], img);
+            }
+        }
+
+        #endregion
 
         #region Transformacoes
 

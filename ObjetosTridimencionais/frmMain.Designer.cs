@@ -35,15 +35,15 @@
             this.abrirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.perspectivasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.paralelaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.perspectivaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ortoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.oblícuaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pontoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eixoZToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eixoYToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.eixoXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.oblícuaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cabinetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cavaleiraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.perspectivaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pontoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -54,7 +54,7 @@
             this.pbCanvas.Dock = System.Windows.Forms.DockStyle.Left;
             this.pbCanvas.Location = new System.Drawing.Point(0, 24);
             this.pbCanvas.Name = "pbCanvas";
-            this.pbCanvas.Size = new System.Drawing.Size(598, 725);
+            this.pbCanvas.Size = new System.Drawing.Size(1469, 1017);
             this.pbCanvas.TabIndex = 0;
             this.pbCanvas.TabStop = false;
             this.pbCanvas.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pbCanvas_MouseDoubleClick);
@@ -73,7 +73,7 @@
             this.perspectivasToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1370, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1904, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -107,8 +107,62 @@
             this.ortoToolStripMenuItem,
             this.oblícuaToolStripMenuItem});
             this.paralelaToolStripMenuItem.Name = "paralelaToolStripMenuItem";
-            this.paralelaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.paralelaToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.paralelaToolStripMenuItem.Text = "Paralela";
+            // 
+            // ortoToolStripMenuItem
+            // 
+            this.ortoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.eixoZToolStripMenuItem,
+            this.eixoYToolStripMenuItem,
+            this.eixoXToolStripMenuItem});
+            this.ortoToolStripMenuItem.Name = "ortoToolStripMenuItem";
+            this.ortoToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.ortoToolStripMenuItem.Text = "Ortográfica";
+            // 
+            // eixoZToolStripMenuItem
+            // 
+            this.eixoZToolStripMenuItem.Name = "eixoZToolStripMenuItem";
+            this.eixoZToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.eixoZToolStripMenuItem.Text = "Eixo Z";
+            this.eixoZToolStripMenuItem.Click += new System.EventHandler(this.eixoZToolStripMenuItem_Click);
+            // 
+            // eixoYToolStripMenuItem
+            // 
+            this.eixoYToolStripMenuItem.Name = "eixoYToolStripMenuItem";
+            this.eixoYToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.eixoYToolStripMenuItem.Text = "Eixo Y";
+            this.eixoYToolStripMenuItem.Click += new System.EventHandler(this.eixoYToolStripMenuItem_Click);
+            // 
+            // eixoXToolStripMenuItem
+            // 
+            this.eixoXToolStripMenuItem.Name = "eixoXToolStripMenuItem";
+            this.eixoXToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.eixoXToolStripMenuItem.Text = "Eixo X";
+            this.eixoXToolStripMenuItem.Click += new System.EventHandler(this.eixoXToolStripMenuItem_Click);
+            // 
+            // oblícuaToolStripMenuItem
+            // 
+            this.oblícuaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.cabinetToolStripMenuItem,
+            this.cavaleiraToolStripMenuItem});
+            this.oblícuaToolStripMenuItem.Name = "oblícuaToolStripMenuItem";
+            this.oblícuaToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.oblícuaToolStripMenuItem.Text = "Oblíqua";
+            // 
+            // cabinetToolStripMenuItem
+            // 
+            this.cabinetToolStripMenuItem.Name = "cabinetToolStripMenuItem";
+            this.cabinetToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.cabinetToolStripMenuItem.Text = "Cabinet";
+            this.cabinetToolStripMenuItem.Click += new System.EventHandler(this.cabinetToolStripMenuItem_Click);
+            // 
+            // cavaleiraToolStripMenuItem
+            // 
+            this.cavaleiraToolStripMenuItem.Name = "cavaleiraToolStripMenuItem";
+            this.cavaleiraToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.cavaleiraToolStripMenuItem.Text = "Cavaleira";
+            this.cavaleiraToolStripMenuItem.Click += new System.EventHandler(this.cavaleiraToolStripMenuItem_Click);
             // 
             // perspectivaToolStripMenuItem
             // 
@@ -118,72 +172,19 @@
             this.perspectivaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.perspectivaToolStripMenuItem.Text = "Perspectiva";
             // 
-            // ortoToolStripMenuItem
-            // 
-            this.ortoToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.eixoZToolStripMenuItem,
-            this.eixoYToolStripMenuItem,
-            this.eixoXToolStripMenuItem});
-            this.ortoToolStripMenuItem.Name = "ortoToolStripMenuItem";
-            this.ortoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.ortoToolStripMenuItem.Text = "Ortográfica";
-            // 
-            // oblícuaToolStripMenuItem
-            // 
-            this.oblícuaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.cabinetToolStripMenuItem,
-            this.cavaleiraToolStripMenuItem});
-            this.oblícuaToolStripMenuItem.Name = "oblícuaToolStripMenuItem";
-            this.oblícuaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.oblícuaToolStripMenuItem.Text = "Oblíqua";
-            // 
             // pontoToolStripMenuItem
             // 
             this.pontoToolStripMenuItem.Name = "pontoToolStripMenuItem";
             this.pontoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.pontoToolStripMenuItem.Text = "1 Ponto";
-            // 
-            // eixoZToolStripMenuItem
-            // 
-            this.eixoZToolStripMenuItem.Name = "eixoZToolStripMenuItem";
-            this.eixoZToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.eixoZToolStripMenuItem.Text = "Eixo Z";
-            this.eixoZToolStripMenuItem.Click += new System.EventHandler(this.eixoZToolStripMenuItem_Click);
-            // 
-            // eixoYToolStripMenuItem
-            // 
-            this.eixoYToolStripMenuItem.Name = "eixoYToolStripMenuItem";
-            this.eixoYToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.eixoYToolStripMenuItem.Text = "Eixo Y";
-            this.eixoYToolStripMenuItem.Click += new System.EventHandler(this.eixoYToolStripMenuItem_Click);
-            // 
-            // eixoXToolStripMenuItem
-            // 
-            this.eixoXToolStripMenuItem.Name = "eixoXToolStripMenuItem";
-            this.eixoXToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.eixoXToolStripMenuItem.Text = "Eixo X";
-            this.eixoXToolStripMenuItem.Click += new System.EventHandler(this.eixoXToolStripMenuItem_Click);
-            // 
-            // cabinetToolStripMenuItem
-            // 
-            this.cabinetToolStripMenuItem.Name = "cabinetToolStripMenuItem";
-            this.cabinetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.cabinetToolStripMenuItem.Text = "Cabinet";
-            this.cabinetToolStripMenuItem.Click += new System.EventHandler(this.cabinetToolStripMenuItem_Click);
-            // 
-            // cavaleiraToolStripMenuItem
-            // 
-            this.cavaleiraToolStripMenuItem.Name = "cavaleiraToolStripMenuItem";
-            this.cavaleiraToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.cavaleiraToolStripMenuItem.Text = "Cavaleira";
-            this.cavaleiraToolStripMenuItem.Click += new System.EventHandler(this.cavaleiraToolStripMenuItem_Click);
+            this.pontoToolStripMenuItem.Click += new System.EventHandler(this.PontoToolStripMenuItem_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(35)))));
-            this.ClientSize = new System.Drawing.Size(1370, 749);
+            this.ClientSize = new System.Drawing.Size(1904, 1041);
             this.Controls.Add(this.pbCanvas);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;

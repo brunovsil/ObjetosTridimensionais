@@ -153,27 +153,56 @@ namespace ObjetosTridimencionais
 
         private void eixoZToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
             _control.setProj(img, '1');
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
         }
 
         private void eixoYToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
             _control.setProj(img, '2');
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
         }
 
         private void eixoXToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
             _control.setProj(img, '3');
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
         }
 
         private void cabinetToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
             _control.setProj(img, '4');
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
         }
 
         private void cavaleiraToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
             _control.setProj(img, '5');
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
+        }
+
+        private void PontoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
+            _control.setProj(img, '6');
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
         }
     }    
 }

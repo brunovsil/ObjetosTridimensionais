@@ -25,46 +25,6 @@ namespace ObjetosTridimencionais
 
         #region Métodos
 
-        public void scanLine(Vertice[] list_v, Color c, Bitmap img)
-        {
-            List<List<NodoET>> et = new List<List<NodoET>>();
-            List<NodoET> aet = new List<NodoET>();
-
-            for(int i = 0; i < 3; i++)
-            {
-                int prox = i + 1;
-                if (i == 2) prox = 0;
-
-                //definindo valores
-                double ymin, ymax, xmax, xmin;
-                if (list_v[listIndex[i]].getY() < list_v[listIndex[prox]].getY())
-                {
-                    ymin = list_v[listIndex[i]].getY();
-                    ymax = list_v[listIndex[prox]].getY();
-                }
-                else
-                {
-                    ymin = list_v[listIndex[prox]].getY();
-                    ymax = list_v[listIndex[i]].getY();
-                }
-
-                if (list_v[listIndex[i]].getX() > list_v[listIndex[prox]].getX())
-                {
-                    xmin = list_v[listIndex[i]].getX();
-                    xmax = list_v[listIndex[prox]].getX();
-                }
-                else
-                {
-                    xmin = list_v[listIndex[prox]].getX();
-                    xmax = list_v[listIndex[i]].getX();
-                }
-
-                //definindo o nodo e adicionando a ET
-                NodoET nodo = new NodoET(ymax, xmin, (ymax - ymin) / (xmax - xmin));
-                et[(int)Math.Round(ymin)].Add(nodo);
-            }
-        }
-
         public void calcNormal(List<Vertice> list_v)
         {
             //vertices

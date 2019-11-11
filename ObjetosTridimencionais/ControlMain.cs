@@ -70,6 +70,9 @@ namespace ObjetosTridimencionais
                 case '5':
                     obj.projecao_pb(img, proj);
                     break;
+                case '6':
+                    obj.projecao_pe(img, proj);
+                    break;
                 default:
                     obj.projecao_po(img, '1');
                     break;
