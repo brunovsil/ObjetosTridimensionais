@@ -204,5 +204,14 @@ namespace ObjetosTridimencionais
             pbCanvas.Image.Dispose();
             pbCanvas.Image = img.Bitmap;
         }
+
+        private void scanLineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            img.Dispose();
+            img = new DirectBitmap(pbCanvas.Width, pbCanvas.Height);
+            _control.scanline(Color.FromArgb(255, 0, 0), img);
+            pbCanvas.Image.Dispose();
+            pbCanvas.Image = img.Bitmap;
+        }
     }    
 }

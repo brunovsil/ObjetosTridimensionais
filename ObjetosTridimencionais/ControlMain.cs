@@ -32,7 +32,8 @@ namespace ObjetosTridimencionais
         {
             obj.translacao(tx, ty, tz);
             obj.aplica_transformacoes();
-            desenha(img);
+            //desenha(img);
+            obj.scanLine(Color.FromArgb(255, 0, 0), img);
         }
 
         public void escala(double value, DirectBitmap img)
@@ -48,7 +49,13 @@ namespace ObjetosTridimencionais
             obj.rotacaoY((ang_y * Math.PI) / 180);
             obj.rotacaoZ((ang_z * Math.PI) / 180);
             obj.aplica_transformacoes();
-            desenha(img);
+            //desenha(img);
+            obj.scanLine(Color.FromArgb(255, 0, 0), img);
+        }
+
+        public void scanline(Color c, DirectBitmap img)
+        {
+            obj.scanLine(c, img);
         }
 
         private void desenha(DirectBitmap img)

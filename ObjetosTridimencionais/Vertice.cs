@@ -9,6 +9,7 @@ namespace ObjetosTridimencionais
     class Vertice
     {
         private double x, y, z;
+        private double[] vetNormal = new double[3];
 
         public Vertice() { }
 

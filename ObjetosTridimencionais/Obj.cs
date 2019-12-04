@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ObjetosTridimencionais
@@ -78,43 +79,232 @@ namespace ObjetosTridimencionais
 
         #region Modelos de Iluminação e Sombreamento e preenchimento
 
-        public void scanLine(Color c, Bitmap img)
+        public void scanLine(Color c, DirectBitmap img)
         {
-            List<NodoET>[] et = new List<NodoET>[img.Height];
-            List<NodoET> aet = new List<NodoET>();
+            List<NodoET>[] et;
+            List<NodoET> aet;
+            Point meio = new Point(img.Width / 2, img.Height / 2);
+            int pos_y = img.Height + 1; //posição do primeiro Y
+            double[,] z_buffer = new double[img.Width, img.Height];
 
-            foreach (Face f in list_f) //para cada face
+            //inicializa o z-buffer
+            for (int i = 0; i < img.Width; i++)
+                for (int j = 0; j < img.Height; j++)
+                    z_buffer[i, j] = 9999;
+
+            //INFORMAÇÕES DO AMBIENTE
+            Vertice luz = new Vertice(10, 10, 1);
+            Vertice obs = new Vertice(0, 0, 1);
+            Color cor_luz = Color.FromArgb(0, 0, 255);
+            int no = 10; //coeficiente da reflexão especular
+
+            foreach (Face f in list_f) //para cada face adiciona os vertices na ET
             {
                 List<int> _vet = f.getVet();
-                List<Point> list_p = new List<Point>();
-                Point pMin, pMax;
-                double yMax, xMin, incX;
+                List<Vertice> list_p = new List<Vertice>();
+                Vertice pMin, pMax;
+                double yMax, xMin, zMin, incZ, incX, dx, dy, dz;
                 NodoET nodo;
+                pos_y = img.Height + 1;
 
+                //variáveis de iluminação
+                double[] k_a = new double[3], //superficie ambiente
+                         k_d = new double[3], //superficie difusa
+                         k_e = new double[3]; //superficie especular
+
+                double[] l_a = new double[3], //ponto de luz ambiente
+                         l_d = new double[3], //ponto de luz difusa
+                         l_e = new double[3]; //ponto de luz especular
+
+                double[] vet_luz = new double[3];
+                vet_luz[0] = luz.getX();
+                vet_luz[1] = luz.getY();
+                vet_luz[2] = luz.getZ();
+                vet_luz = Vetores.div_esc(vet_luz, Vetores.modulo(vet_luz));
+
+                double[] vet_olho = new double[3];
+                vet_olho[0] = list_va[_vet[0] - 1].getX() - obs.getX();
+                vet_olho[1] = list_va[_vet[0] - 1].getY() - obs.getY();
+                vet_olho[2] = list_va[_vet[0] - 1].getZ() - obs.getZ();
+                vet_olho = Vetores.div_esc(vet_olho, Vetores.modulo(vet_olho));
+
+                //luz ambiente
+                double mod_amb = 0.5; //modificador para luz ambiente
+                l_a[0] = cor_luz.R / 255 * mod_amb;
+                l_a[1] = cor_luz.G / 255 * mod_amb;
+                l_a[2] = cor_luz.B / 255 * mod_amb;
+
+                //luz difusa
+                double mod_dif = 1;
+                l_d[0] = cor_luz.R / 255 * mod_dif;
+                l_d[1] = cor_luz.G / 255 * mod_dif;
+                l_d[2] = cor_luz.B / 255 * mod_dif;
+
+                //luz especular
+                double mod_esp = 1;
+                l_e[0] = cor_luz.R / 255 * mod_esp;
+                l_e[1] = cor_luz.G / 255 * mod_esp;
+                l_e[2] = cor_luz.B / 255 * mod_esp;
+
+                //superficie ambiente
+                double mod_samb = 1; //modificador para superficie ambiente
+                k_a[0] = c.R / 255 * mod_samb;
+                k_a[1] = c.G / 255 * mod_samb;
+                k_a[2] = c.B / 255 * mod_samb;
+
+                //superficie difusa
+                double mod_sdif = 0.5;
+                k_d[0] = c.R / 255 * mod_sdif;
+                k_d[1] = c.G / 255 * mod_sdif;
+                k_d[2] = c.B / 255 * mod_sdif;
+
+                //superficie especular
+                double mod_sesp = 1;
+                k_e[0] = c.R / 255 * mod_sesp;
+                k_e[1] = c.G / 255 * mod_sesp;
+                k_e[2] = c.B / 255 * mod_sesp;
+
+                //componentes de reflexão
+                //ambiente
+                double[] c_a = Vetores.mult(l_a, k_a);
+
+                //difusa
+                double[] c_d = new double[3];
+                double cos = Vetores.prodEscalar(vet_luz, f.getNormal()) / Vetores.modulo(vet_luz) * Vetores.modulo(f.getNormal());
+                c_d = Vetores.mult(l_d, k_d);
+                c_d = Vetores.mult_esc(c_d, cos);
+                c_d = Vetores.adc(c_a, c_d);
+
+                //especular
+                double[] c_e = new double[3];
+                double[] H = Vetores.adc(vet_luz, vet_olho);
+                H = Vetores.div_esc(H, Vetores.modulo(H));
+                c_e = Vetores.mult(l_e, k_e);
+                c_e = Vetores.mult_esc(c_e, Math.Pow(Vetores.prodEscalar(f.getNormal(), H), no));
+
+                //phong
+                double cor_r = (c_d[0] + c_e[0]) * 255;
+                double cor_g = (c_d[1] + c_e[1]) * 255;
+                double cor_b = (c_d[2] + c_e[2]) * 255;
+                cor_r = cor_r > 0 ? cor_r : 0; cor_r = cor_r < 255 ? cor_r : 255;
+                cor_g = cor_g > 0 ? cor_g : 0; cor_g = cor_g < 255 ? cor_g : 255;
+                cor_b = cor_b > 0 ? cor_b : 0; cor_b = cor_b < 255 ? cor_b : 255;
+
+                Color nova_c = Color.FromArgb((int)cor_r, (int)cor_g, (int)cor_b);
+
+                //zerar as estruturas para a nova face
+                et = new List<NodoET>[img.Height];
+                aet = new List<NodoET>();
+                for (int i = 0; i < et.Count(); i++)
+                    et[i] = new List<NodoET>();
+
+                //criar lista de pontos da face
                 for (int i = 0; i < _vet.Count; i++)
-                    list_p.Add(new Point((int)list_va[_vet[i] - 1].getX(), (int)list_va[_vet[i] - 1].getY()));
+                    list_p.Add(new Vertice(list_va[_vet[i] - 1].getX() + meio.X, list_va[_vet[i] - 1].getY() + meio.Y, (int)list_va[_vet[i] - 1].getZ()));
 
-                for(int i = 0; i < list_p.Count - 1; i++)
+                for (int i = 0; i < list_p.Count - 1; i++)
                 {
-                    pMin = list_p[i].Y >= list_p[i + 1].Y ? list_p[i + 1] : list_p[i];
-                    pMax = list_p[i].Y >= list_p[i + 1].Y ? list_p[i] : list_p[i + 1];
-                    yMax = pMax.Y;
-                    xMin = pMin.X;
-                    incX = (pMax.X - pMin.X) / (pMax.Y - pMin.Y);
+                    //atualiza a posição do menor Y
+                    if ((int)list_p[i].getY() < pos_y)
+                        pos_y = (int)list_p[i].getY();
 
-                    nodo = new NodoET(yMax, xMin, incX);
-                    et[pMin.Y].Add(nodo);
+                    //define os pontos de menor e maior Y (ponto mínimo e máximo)
+                    pMin = list_p[i].getY() >= list_p[i + 1].getY() ? list_p[i + 1] : list_p[i];
+                    pMax = list_p[i].getY() >= list_p[i + 1].getY() ? list_p[i] : list_p[i + 1];
+                    zMin = pMin.getZ();
+                    yMax = pMax.getY();
+                    xMin = pMin.getX();
+                    dx = pMax.getX() - pMin.getX();
+                    dy = pMax.getY() - pMin.getY();
+                    dz = pMax.getZ() - pMin.getZ();
+                    incX = dy == 0 ? 0 : dx / dy;
+                    incZ = dy == 0 ? 0 : dz / dy;
+
+                    //cria e adiciona o nodo da aresta a ET
+                    nodo = new NodoET(yMax, xMin, zMin, incX, incZ);
+                    et[(int)pMin.getY()].Add(nodo);
                 }
-                pMin = list_p[list_p.Count].Y >= list_p[0].Y ? list_p[0] : list_p[list_p.Count];
-                pMax = list_p[list_p.Count].Y >= list_p[0].Y ? list_p[list_p.Count] : list_p[0];
-                yMax = pMax.Y;
-                xMin = pMin.X;
-                incX = (pMax.X - pMin.X) / (pMax.Y - pMin.Y);
+                if ((int)list_p[list_p.Count - 1].getY() < pos_y)
+                    pos_y = (int)list_p[list_p.Count - 1].getY();
 
-                nodo = new NodoET(yMax, xMin, incX);
-                et[pMin.Y].Add(nodo);
+                //replica o processo para criar a aresta entre o último e o primeiro elemento
+                pMin = list_p[list_p.Count - 1].getY() >= list_p[0].getY() ? list_p[0] : list_p[list_p.Count - 1];
+                pMax = list_p[list_p.Count - 1].getY() >= list_p[0].getY() ? list_p[list_p.Count - 1] : list_p[0];
+                zMin = pMin.getZ();
+                yMax = pMax.getY();
+                xMin = pMin.getX();
+                dx = pMax.getX() - pMin.getX();
+                dy = pMax.getY() - pMin.getY();
+                dz = pMax.getZ() - pMin.getZ();
+                incX = dy == 0 ? 0 : dx / dy;
+                incZ = dy == 0 ? 0 : dz / dy;
 
+                nodo = new NodoET(yMax, xMin, zMin, incX, incZ);
+                et[(int)pMin.getY()].Add(nodo);
+                //--------------------------------------
 
+                do
+                {
+                    //para cada nodo da ET na posição do Y atual o adiciona na AET
+                    foreach (NodoET n in et[pos_y])
+                        aet.Add(n);
+
+                    //retira as arestas que tem o Ymax como Y atual (arestas que ja chegaram no Y máximo)
+                    List<NodoET> list_aux = new List<NodoET>();
+                    for (int i = aet.Count - 1; i >= 0; i--)
+                        if ((int)aet[i].getYMax() == pos_y)
+                            aet.RemoveAt(i);
+
+                    //desenha a reta em relação aos pontos na AET
+                    for (int i = 0; i < aet.Count - 1; i += 2)
+                    {
+                        Vertice ini = new Vertice(aet[i].getXMin() , pos_y, aet[i].getZMin());
+                        Vertice fim = new Vertice(aet[i + 1].getXMin(), pos_y, aet[i + 1].getZMin());
+
+                        //recalculo os valores (variáveis auxiliares)
+                        double zMin_ = ini.getZ();
+                        double dx_ = fim.getX() - ini.getX();
+                        double dz_ = fim.getZ() - ini.getZ();
+                        double incZ_ = dx_ == 0 ? 0 : dz_ / dx_;
+
+                        //percorre a reta 
+                        for (int j = (int)ini.getX(); j <= (int)fim.getX(); j++)
+                        {
+                            if(zMin_ <= z_buffer[j, pos_y])
+                            {
+                                //atualiza o z_buffer
+                                z_buffer[j, pos_y] = zMin_;
+                                //atualiza o color_buffer
+                                img.SetPixel(j, pos_y, nova_c);
+                            }
+                            zMin_ += incZ_; //incrementa o z
+                        }
+                    }
+
+                    //incrementa o Y atual
+                    pos_y++;
+
+                    //atualiza o X dos Nodos da AET com o seu incremento
+                    foreach (NodoET n in aet)
+                        n.setXMin(n.getXMin() + n.getIncX());
+
+                    //atualiza o Z dos Nodos da AET com o seu incremento
+                    foreach (NodoET n in aet)
+                        n.setZMin(n.getZMin() + n.getIncZ());
+
+                    //ordena os elementos em relação ao novo X
+                    for (int i = 0; i < aet.Count - 1; i++)
+                        for (int j = i + 1; j < aet.Count; j++)
+                        {
+                            if (aet[i].getXMin() > aet[j].getXMin())
+                            {
+                                NodoET nodo_aux = aet[j];
+                                aet[j] = aet[i];
+                                aet[i] = nodo_aux;
+                            }
+                        }
+
+                } while (aet.Count != 0);
             }
         }
 
@@ -376,7 +566,6 @@ namespace ObjetosTridimencionais
         #endregion
 
         #region Metodos Auxiliares
-
         //algoritmo do ponto médio para traçado de retas
         private void desenha_reta(Point ini, Point fim, DirectBitmap img)
         {
@@ -430,6 +619,70 @@ namespace ObjetosTridimencionais
                 {
                     if (verifica_borda(new Point(x, y), img))
                         img.SetPixel(x, y, Color.FromArgb(255, 255, 255));
+
+                    if (d <= 0) d += incE;
+                    else
+                    {
+                        d += incNE;
+                        x += declive;
+                    }
+                }
+            }
+        }
+
+        //algoritmo do ponto médio para traçado de retas
+        private void desenha_reta(Point ini, Point fim, Color c,  DirectBitmap img)
+        {
+            int declive = 1;
+            int dx, dy, incE, incNE, d, x, y;
+
+            int x1 = ini.X, x2 = fim.X, y1 = ini.Y, y2 = fim.Y;
+            dx = x2 - x1;
+            dy = y2 - y1;
+
+            if (Math.Abs(dx) >= Math.Abs(dy))
+            {
+                declive = dy < 0 ? -1 : 1;
+                if (x1 > x2)
+                    desenha_reta(fim, ini, c, img);
+
+                //constante de bresenham
+                dy *= declive;
+                incE = 2 * dy;
+                incNE = 2 * dy - 2 * dx;
+                d = 2 * dy - dx;
+                y = y1;
+
+                for (x = x1; x <= x2; x++)
+                {
+                    if (verifica_borda(new Point(x, y), img))
+                        img.SetPixel(x, y, c);
+
+                    if (d <= 0) d += incE;
+                    else
+                    {
+                        d += incNE;
+                        y += declive;
+                    }
+                }
+            }
+            else
+            {
+                declive = dx < 0 ? -1 : 1;
+                if (y1 > y2)
+                    desenha_reta(fim, ini, c, img);
+
+                //constante de bresenham
+                dx *= declive;
+                incE = 2 * dx;
+                incNE = 2 * dx - 2 * dy;
+                d = 2 * dx - dy;
+                x = x1;
+
+                for (y = y1; y <= y2; y++)
+                {
+                    if (verifica_borda(new Point(x, y), img))
+                        img.SetPixel(x, y, c);
 
                     if (d <= 0) d += incE;
                     else

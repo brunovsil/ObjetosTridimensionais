@@ -44,6 +44,7 @@
             this.cavaleiraToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.perspectivaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pontoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.scanLineToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbCanvas)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -54,7 +55,7 @@
             this.pbCanvas.Dock = System.Windows.Forms.DockStyle.Left;
             this.pbCanvas.Location = new System.Drawing.Point(0, 24);
             this.pbCanvas.Name = "pbCanvas";
-            this.pbCanvas.Size = new System.Drawing.Size(1469, 1017);
+            this.pbCanvas.Size = new System.Drawing.Size(1469, 725);
             this.pbCanvas.TabIndex = 0;
             this.pbCanvas.TabStop = false;
             this.pbCanvas.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pbCanvas_MouseDoubleClick);
@@ -73,7 +74,7 @@
             this.perspectivasToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1904, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1370, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -167,7 +168,8 @@
             // perspectivaToolStripMenuItem
             // 
             this.perspectivaToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pontoToolStripMenuItem});
+            this.pontoToolStripMenuItem,
+            this.scanLineToolStripMenuItem});
             this.perspectivaToolStripMenuItem.Name = "perspectivaToolStripMenuItem";
             this.perspectivaToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.perspectivaToolStripMenuItem.Text = "Perspectiva";
@@ -175,16 +177,23 @@
             // pontoToolStripMenuItem
             // 
             this.pontoToolStripMenuItem.Name = "pontoToolStripMenuItem";
-            this.pontoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pontoToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.pontoToolStripMenuItem.Text = "1 Ponto";
             this.pontoToolStripMenuItem.Click += new System.EventHandler(this.PontoToolStripMenuItem_Click);
+            // 
+            // scanLineToolStripMenuItem
+            // 
+            this.scanLineToolStripMenuItem.Name = "scanLineToolStripMenuItem";
+            this.scanLineToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.scanLineToolStripMenuItem.Text = "ScanLine";
+            this.scanLineToolStripMenuItem.Click += new System.EventHandler(this.scanLineToolStripMenuItem_Click);
             // 
             // frmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(35)))));
-            this.ClientSize = new System.Drawing.Size(1904, 1041);
+            this.ClientSize = new System.Drawing.Size(1370, 749);
             this.Controls.Add(this.pbCanvas);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
@@ -219,6 +228,7 @@
         private System.Windows.Forms.ToolStripMenuItem cavaleiraToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem perspectivaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pontoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem scanLineToolStripMenuItem;
     }
 }
 
